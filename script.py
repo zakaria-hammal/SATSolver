@@ -47,11 +47,12 @@ def davis_putnam(fnc : list[list[int]]) -> bool:
             if val not in res:
                 res.append(val)
 
-        f = res
+        f = res.copy()
         res = [a.copy() for a in f if a != []]
-        f = res
+        f = res.copy()
 
-        ens = f
+        ens = [a.copy() for a in f]
+
         l = [(c, d) for c in f for d in f if c.__len__() == 1 == d.__len__() and c[0] == -d[0]]
 
         if(l != []):
@@ -69,9 +70,9 @@ def davis_putnam(fnc : list[list[int]]) -> bool:
                     if val not in res:
                         res.append(val)
 
-                f = res
+                f = res.copy()
                 res = [d.copy() for d in f if d != []]
-                f = res
+                f = res.copy()
 
                 c = f.copy()
 
@@ -82,14 +83,12 @@ def davis_putnam(fnc : list[list[int]]) -> bool:
                         if a[0] in b:
                             c.remove(b)
                 
-                f = c
+                f = c.copy()
                 f.remove(a)
                 l1 = [(c, d) for c in f for d in f if c.__len__() == 1 == d.__len__() and c[0] == -d[0]]
 
                 if(l1 != []):
                     return False
-                
-            
             
             res = []
             for val in f:
@@ -99,10 +98,11 @@ def davis_putnam(fnc : list[list[int]]) -> bool:
             f = res
             res = [a.copy() for a in f if a != []]
             f = res
+
             if f == []:
                 return True
 
-        else:    
+        else:
             c = f.copy().pop()
             for a in f:
                 c = list(set(a) & set(c))
@@ -116,16 +116,17 @@ def davis_putnam(fnc : list[list[int]]) -> bool:
                 if val not in res:
                     res.append(val)
 
-            f = res
+            f = res.copy()
             res = [d.copy() for d in f if d != []]
-            f = res
+            f = res.copy()
 
             if f == []:
                 return True
-        
+    
     cons = moms(f)
     f1 = f.copy()
     f1 = [b.copy() for b in f if not -cons in b]
+
     for b in f1:
         if cons in b:
             b.remove(cons)
