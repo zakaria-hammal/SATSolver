@@ -103,22 +103,20 @@ def davis_putnam(fnc : list[list[int]]) -> bool:
                 return True
 
         else:
-            c = f.copy().pop()
+            u = []
             for a in f:
-                c = list(set(a) & set(c))
+                u = list(set(a).union(u))
+            
+            c = [a for a in u if not -a in u]
 
             for a in c:
+                d = [e.copy() for e in f]
+
                 for b in f:
-                    b.remove(a)
-
-            res = []
-            for val in f:
-                if val not in res:
-                    res.append(val)
-
-            f = res.copy()
-            res = [d.copy() for d in f if d != []]
-            f = res.copy()
+                    if a in b:
+                        d.remove(b)
+                
+                f = [e.copy() for e in d]
 
             if f == []:
                 return True
