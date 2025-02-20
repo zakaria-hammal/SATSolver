@@ -10,7 +10,7 @@ def moms(fn : list[list[int]]) -> int:
             l = a.__len__()
         
     c = []
-    c = [a for a in fn if a.__len__() == l]
+    c = [a.copy() for a in fn if a.__len__() == l]
 
     u = []
     for a in c:
@@ -42,6 +42,7 @@ def davis_putnam(fnc : list[list[int]]) -> bool:
     ens = []
 
     while ens != f:
+        # We eliminate redandent and empty sub-formulas
         res = []
         for val in f:
             if val not in res:
@@ -53,17 +54,22 @@ def davis_putnam(fnc : list[list[int]]) -> bool:
 
         ens = [a.copy() for a in f]
 
+        # First Step : Unit propagation 
+        # We look for litterals which are negations of others litterals in our formula
         l = [(c, d) for c in f for d in f if c.__len__() == 1 == d.__len__() and c[0] == -d[0]]
 
+        # If the list is not empty which mean that there is a litteral and its negation then our formula is unsatisfied
         if(l != []):
             return False
 
         l.clear()
 
+        # We look for litterals
         l = [c for c in f if c.__len__() == 1]
         c = []
 
         if l != []:
+            # We eliminate rednadent and empty sub-formulas
             for a in l:
                 res = []
                 for val in f:
@@ -76,15 +82,20 @@ def davis_putnam(fnc : list[list[int]]) -> bool:
 
                 c = f.copy()
 
+                # Foreach litteral l :
                 for b in f:
                     if b.__len__() > 1:
+                        # We delete the occurences of -l in each formula :
                         if -a[0] in b:
                             b.remove(-a[0])
+                        # We delete the formulas that contains l :
                         if a[0] in b:
                             c.remove(b)
                 
                 f = c.copy()
                 f.remove(a)
+
+                # We search for inconsistancy again
                 l1 = [(c, d) for c in f for d in f if c.__len__() == 1 == d.__len__() and c[0] == -d[0]]
 
                 if(l1 != []):
@@ -95,32 +106,43 @@ def davis_putnam(fnc : list[list[int]]) -> bool:
                 if val not in res:
                     res.append(val)
 
+            # We eliminate rednadent and empty sub-formulas
             f = res
             res = [a.copy() for a in f if a != []]
             f = res
 
+            # If our new formula is empty then it is satisfied
             if f == []:
                 return True
 
         else:
+            # Second Step : Pure literal elimination
+
             u = []
             for a in f:
                 u = list(set(a).union(u))
             
+            # We seach for pure literals
             c = [a for a in u if not -a in u]
 
+            # For all pure ltteral l ...
             for a in c:
                 d = [e.copy() for e in f]
 
+                # We delete the clause that contains l :
                 for b in f:
                     if a in b:
                         d.remove(b)
                 
                 f = [e.copy() for e in d]
-
+            
+            # If our new formula is empty then it is satisfied
             if f == []:
                 return True
     
+    # Third Step : Consensus
+
+    # We search for the consensus using MOMS method
     cons = moms(f)
     f1 = f.copy()
     f1 = [b.copy() for b in f if not -cons in b]
